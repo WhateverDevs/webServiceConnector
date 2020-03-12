@@ -1,6 +1,6 @@
 {
   "name": "whateverdevs.webserviceconnector",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "dependencies": {
     "whateverdevs.core": "0.0.7"
   },

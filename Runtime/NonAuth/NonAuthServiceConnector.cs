@@ -62,7 +62,8 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
                                               new UploadHandlerRaw(Encoding.UTF8.GetBytes(jsonParam))
                                               {
                                                   contentType = "application/json"
-                                              }
+                                              },
+                                          downloadHandler = new DownloadHandlerBuffer()
                                       };
 
             request.SetRequestHeader("Content-Type", "application/json");
@@ -73,7 +74,7 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
             bool success = !(request.isNetworkError || request.isHttpError);
 
             if (success)
-                result = request.downloadHandler.text;
+                result = Encoding.UTF8.GetString(request.downloadHandler.data);
             else
             {
                 GetLogger().Error("Web request response: " + request.responseCode + ".");

@@ -1,8 +1,8 @@
 {
   "name": "whateverdevs.webserviceconnector",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "dependencies": {
-    "whateverdevs.core": "0.0.7"
+    "whateverdevs.core": "0.0.10"
   },
   "displayName": "Web Service Connector",
   "description": "Injectable web service connector for an easy implementation of web service requests.",

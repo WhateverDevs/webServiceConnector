@@ -40,6 +40,31 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
         /// Ask the server for a json sending some json parameter.
         /// </summary>
         /// <param name="uri">Relative uri inside the service starting with "/".</param>
+        /// <param name="resultCallback">Method that will be called when the request is finished.
+        /// The bool parameters shows if it was successful, the string will be the result if successful, the error if not.</param>
+        public void GetJsonWithoutParams(string uri, Action<bool, string> resultCallback) =>
+            CoroutineRunner.Instance.RunRoutine(GetJsonWithoutParamsRoutine(uri, resultCallback));
+
+        /// <summary>
+        /// Ask the server for a json sending some json parameter.
+        /// </summary>
+        /// <param name="uri">Relative uri inside the service starting with "/".</param>
+        /// <param name="resultCallback">Method that will be called when the request is finished.
+        /// The bool parameters shows if it was successful, the string will be the result if successful, the error if not.</param>
+        private IEnumerator GetJsonWithoutParamsRoutine(string uri, Action<bool, string> resultCallback)
+        {
+            UnityWebRequest request = new UnityWebRequest(Config.Uri + uri, UnityWebRequest.kHttpVerbGET)
+                                      {
+                                          downloadHandler = new DownloadHandlerBuffer()
+                                      };
+
+            yield return PerformStringOrJsonRequest(request, resultCallback);
+        }
+
+        /// <summary>
+        /// Ask the server for a json sending some json parameter.
+        /// </summary>
+        /// <param name="uri">Relative uri inside the service starting with "/".</param>
         /// <param name="jsonParam">The parameter to send.</param>
         /// <param name="resultCallback">Method that will be called when the request is finished.
         /// The bool parameters shows if it was successful, the string will be the result if successful, the error if not.</param>
@@ -68,6 +93,17 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
 
             request.SetRequestHeader("Content-Type", "application/json");
 
+            yield return PerformStringOrJsonRequest(request, resultCallback);
+        }
+
+        /// <summary>
+        /// Performs the given request.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="resultCallback"></param>
+        /// <returns></returns>
+        private IEnumerator PerformStringOrJsonRequest(UnityWebRequest request, Action<bool, string> resultCallback)
+        {
             yield return request.SendWebRequest();
 
             string result;

@@ -1,5 +1,4 @@
 ﻿using System;
-using WhateverDevs.WebServiceConnector.Runtime.NonAuth;
 
 namespace WhateverDevs.WebServiceConnector.Runtime.Auth
 {
@@ -8,6 +7,34 @@ namespace WhateverDevs.WebServiceConnector.Runtime.Auth
     /// </summary>
     public interface IAuthWebServiceConnector
     {
+        /// <summary>
+        /// Are we logged in?
+        /// </summary>
+        bool LoggedIn();
+        
+        /// <summary>
+        /// Login to the service.
+        /// </summary>
+        /// <param name="email">Login credentials.</param>
+        /// <param name="password">Login credentials.</param>
+        /// <param name="resultCallback">Login result.</param>
+        void Login(string email, string password, Action<LoginResult> resultCallback);
+
+        /// <summary>
+        /// Logout from the server.
+        /// <param name="resultCallback">Will return true if successful.</param>
+        /// </summary>
+        void Logout(Action<bool> resultCallback);
+
+        /// <summary>
+        /// Register on the service.
+        /// </summary>
+        /// <param name="username">Login credentials.</param>
+        /// <param name="email">Login credentials.</param>
+        /// <param name="password">Login credentials.</param>
+        /// <param name="resultCallback">Will return true if successful.</param>
+        void Register(string username, string email, string password, Action<bool> resultCallback);
+        
         /// <summary>
         /// Ask the server for a json sending some json parameter.
         /// </summary>

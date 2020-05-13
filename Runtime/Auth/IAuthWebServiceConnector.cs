@@ -21,26 +21,11 @@ namespace WhateverDevs.WebServiceConnector.Runtime.Auth
         void Login(string email, string password, Action<LoginResult> resultCallback);
 
         /// <summary>
-        /// Logout from the server.
-        /// <param name="resultCallback">Will return true if successful.</param>
-        /// </summary>
-        void Logout(Action<bool> resultCallback);
-
-        /// <summary>
-        /// Register on the service.
-        /// </summary>
-        /// <param name="username">Login credentials.</param>
-        /// <param name="email">Login credentials.</param>
-        /// <param name="password">Login credentials.</param>
-        /// <param name="resultCallback">Will return true if successful.</param>
-        void Register(string username, string email, string password, Action<bool> resultCallback);
-        
-        /// <summary>
-        /// Ask the server for a json sending some json parameter.
+        /// Ask the server for a json without params.
         /// </summary>
         /// <param name="uri">Relative uri inside the service starting with "/".</param>
         /// <param name="resultCallback">Method that will be called when the request is finished.
         /// The bool parameters shows if it was successful, the string will be the result if successful, the error if not.</param>
-        void PostForJsonTextWithoutParams(string uri, Action<bool, string> resultCallback);
+        void GetJsonTextWithoutParams(string uri, Action<bool, string> resultCallback);
     }
 }

@@ -67,7 +67,7 @@ namespace WhateverDevs.WebServiceConnector.Runtime.Auth
         public void Login(string email, string password, Action<LoginResult> resultCallback)
         {
             GetLogger().Info("Attempting to login with email \"" + email + "\"");
-            
+
             UnityWebRequest request = new UnityWebRequest(Config.Uri + Config.LoginUri, UnityWebRequest.kHttpVerbPOST)
                                       {
                                           uploadHandler =
@@ -126,13 +126,65 @@ namespace WhateverDevs.WebServiceConnector.Runtime.Auth
             }
         }
 
-        public void Logout(Action<bool> resultCallback) => throw new NotImplementedException();
+        /// <summary>
+        /// Ask the server for a json without params.
+        /// </summary>
+        /// <param name="uri">Relative uri inside the service starting with "/".</param>
+        /// <param name="resultCallback">Method that will be called when the request is finished.
+        /// The bool parameters shows if it was successful, the string will be the result if successful, the error if not.</param>
+        public void GetJsonTextWithoutParams(string uri, Action<bool, string> resultCallback)
+        {
+            if (!loggedIn)
+            {
+                resultCallback.Invoke(false, "Not logged in!");
+                return;
+            }
 
-        public void Register(string username, string email, string password, Action<bool> resultCallback) =>
-            throw new NotImplementedException();
+            UnityWebRequest request = new UnityWebRequest(Config.Uri + uri, UnityWebRequest.kHttpVerbGET)
+                                      {
+                                          downloadHandler = new DownloadHandlerBuffer()
+                                      };
 
-        public void PostForJsonTextWithoutParams(string uri, Action<bool, string> resultCallback) =>
-            throw new NotImplementedException();
+            PrepareHeaders(ref request);
+
+            CoroutineRunner.Instance.RunRoutine(PerformStringOrJsonRequest(request, resultCallback));
+        }
+
+        /// <summary>
+        /// Prepares the headers for a request with auth.
+        /// </summary>
+        /// <param name="request"></param>
+        private void PrepareHeaders(ref UnityWebRequest request)
+        {
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Accept", "application/json");
+            request.SetRequestHeader("Authorization", "Bearer " + sessionToken);
+        }
+
+        /// <summary>
+        /// Performs the given request.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="resultCallback"></param>
+        /// <returns></returns>
+        private IEnumerator PerformStringOrJsonRequest(UnityWebRequest request, Action<bool, string> resultCallback)
+        {
+            yield return request.SendWebRequest();
+
+            string result;
+            bool success = !(request.isNetworkError || request.isHttpError);
+
+            if (success)
+                result = Encoding.UTF8.GetString(request.downloadHandler.data);
+            else
+            {
+                GetLogger().Error("Web request response: " + request.responseCode + ".");
+                GetLogger().Error("Web request error: " + request.error + ".");
+                result = request.responseCode.ToString();
+            }
+
+            resultCallback.Invoke(success, result);
+        }
 
         /// <summary>
         /// Class representing the login parameters.

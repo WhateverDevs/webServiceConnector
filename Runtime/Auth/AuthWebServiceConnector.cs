@@ -244,7 +244,9 @@ namespace WhateverDevs.WebServiceConnector.Runtime.Auth
         [Serializable]
         private class LoginToken
         {
+            #pragma warning disable 649
             public string token;
+            #pragma warning restore 649
             // ReSharper restore InconsistentNaming
             // ReSharper restore NotAccessedField.Local
         }

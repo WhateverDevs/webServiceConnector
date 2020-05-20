@@ -127,6 +127,15 @@ namespace WhateverDevs.WebServiceConnector.Runtime.Auth
         }
 
         /// <summary>
+        /// Logs out.
+        /// </summary>
+        public void LogOut()
+        {
+            sessionToken = null;
+            loggedIn = false;
+        }
+
+        /// <summary>
         /// Ask the server for a json without params.
         /// </summary>
         /// <param name="uri">Relative uri inside the service starting with "/".</param>

@@ -8,12 +8,20 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
     public interface INonAuthWebServiceConnector
     {
         /// <summary>
-        /// Ask the server for a json sending some json parameter.
+        /// Ask the server for a json.
         /// </summary>
         /// <param name="uri">Relative uri inside the service starting with "/".</param>
         /// <param name="resultCallback">Method that will be called when the request is finished.
         /// The bool parameters shows if it was successful, the string will be the result if successful, the error if not.</param>
         void GetJsonWithoutParams(string uri, Action<bool, string> resultCallback);
+        
+        /// <summary>
+        /// Ask the server for bytes.
+        /// </summary>
+        /// <param name="uri">Relative uri inside the service starting with "/".</param>
+        /// <param name="resultCallback">Method that will be called when the request is finished.
+        /// The bool parameters shows if it was successful, the string will be the result if successful, the error if not.</param>
+        void GetBytesWithoutParams(string uri, Action<bool, byte[]> resultCallback);
         
         /// <summary>
         /// Ask the server for a json sending some json parameter.

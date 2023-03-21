@@ -43,7 +43,7 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
         /// <param name="resultCallback">Method that will be called when the request is finished.
         /// The bool parameters shows if it was successful, the string will be the result if successful, the error if not.</param>
         public void GetJsonWithoutParams(string uri, Action<bool, string> resultCallback) =>
-            CoroutineRunner.Instance.RunRoutine(GetJsonWithoutParamsRoutine(uri, resultCallback));
+            CoroutineRunner.RunRoutine(GetJsonWithoutParamsRoutine(uri, resultCallback));
 
         /// <summary>
         /// Ask the server for a json.
@@ -53,14 +53,14 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
         /// The bool parameters shows if it was successful, the string will be the result if successful, the error if not.</param>
         private IEnumerator GetJsonWithoutParamsRoutine(string uri, Action<bool, string> resultCallback)
         {
-            UnityWebRequest request = new UnityWebRequest(Config.Uri + uri, UnityWebRequest.kHttpVerbGET)
+            UnityWebRequest request = new(Config.Uri + uri, UnityWebRequest.kHttpVerbGET)
                                       {
                                           downloadHandler = new DownloadHandlerBuffer()
                                       };
 
             yield return PerformStringOrJsonRequest(request, resultCallback);
         }
-        
+
         /// <summary>
         /// Ask the server for bytes.
         /// </summary>
@@ -68,7 +68,7 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
         /// <param name="resultCallback">Method that will be called when the request is finished.
         /// The bool parameters shows if it was successful, the string will be the result if successful, the error if not.</param>
         public void GetBytesWithoutParams(string uri, Action<bool, byte[]> resultCallback) =>
-            CoroutineRunner.Instance.RunRoutine(GetBytesWithoutParamsRoutine(uri, resultCallback));
+            CoroutineRunner.RunRoutine(GetBytesWithoutParamsRoutine(uri, resultCallback));
 
         /// <summary>
         /// Ask the server for bytes.
@@ -78,7 +78,7 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
         /// The bool parameters shows if it was successful, the string will be the result if successful, the error if not.</param>
         private IEnumerator GetBytesWithoutParamsRoutine(string uri, Action<bool, byte[]> resultCallback)
         {
-            UnityWebRequest request = new UnityWebRequest(Config.Uri + uri, UnityWebRequest.kHttpVerbGET)
+            UnityWebRequest request = new(Config.Uri + uri, UnityWebRequest.kHttpVerbGET)
                                       {
                                           downloadHandler = new DownloadHandlerBuffer()
                                       };
@@ -94,7 +94,7 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
         /// <param name="resultCallback">Method that will be called when the request is finished.
         /// The bool parameters shows if it was successful, the string will be the result if successful, the error if not.</param>
         public void PostForJsonTextWithJsonParam(string uri, string jsonParam, Action<bool, string> resultCallback) =>
-            CoroutineRunner.Instance.RunRoutine(PostForJsonTextWithJsonParamRoutine(uri, jsonParam, resultCallback));
+            CoroutineRunner.RunRoutine(PostForJsonTextWithJsonParamRoutine(uri, jsonParam, resultCallback));
 
         /// <summary>
         /// Internal coroutine to ask the server for a json sending some json parameter.
@@ -106,7 +106,7 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
                                                                 string jsonParam,
                                                                 Action<bool, string> resultCallback)
         {
-            UnityWebRequest request = new UnityWebRequest(Config.Uri + uri, UnityWebRequest.kHttpVerbPOST)
+            UnityWebRequest request = new(Config.Uri + uri, UnityWebRequest.kHttpVerbPOST)
                                       {
                                           uploadHandler =
                                               new UploadHandlerRaw(Encoding.UTF8.GetBytes(jsonParam))
@@ -132,7 +132,10 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
             yield return request.SendWebRequest();
 
             string result;
-            bool success = !(request.isNetworkError || request.isHttpError);
+
+            bool success =
+                request.result is not (UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError
+                    or UnityWebRequest.Result.DataProcessingError);
 
             if (success)
                 result = Encoding.UTF8.GetString(request.downloadHandler.data);
@@ -145,7 +148,7 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
 
             resultCallback.Invoke(success, result);
         }
-        
+
         /// <summary>
         /// Performs the given request.
         /// </summary>
@@ -157,7 +160,10 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
             yield return request.SendWebRequest();
 
             byte[] result;
-            bool success = !(request.isNetworkError || request.isHttpError);
+
+            bool success =
+                request.result is not (UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError
+                    or UnityWebRequest.Result.DataProcessingError);
 
             if (success)
                 result = request.downloadHandler.data;

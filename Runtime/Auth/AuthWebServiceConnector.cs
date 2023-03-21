@@ -72,11 +72,11 @@ namespace WhateverDevs.WebServiceConnector.Runtime.Auth
                                       {
                                           uploadHandler =
                                               new UploadHandlerRaw(Encoding.UTF8.GetBytes(JsonSerializer
-                                                                                             .To(new LoginParameters()
-                                                                                                 {
-                                                                                                     email = email,
-                                                                                                     password = password
-                                                                                                 })))
+                                                                      .To(new LoginParameters()
+                                                                          {
+                                                                              email = email,
+                                                                              password = password
+                                                                          })))
                                               {
                                                   contentType = "application/json"
                                               },
@@ -85,7 +85,7 @@ namespace WhateverDevs.WebServiceConnector.Runtime.Auth
 
             request.SetRequestHeader("Content-Type", "application/json");
 
-            CoroutineRunner.Instance.RunRoutine(Login(request, resultCallback));
+            CoroutineRunner.RunRoutine(Login(request, resultCallback));
         }
 
         /// <summary>
@@ -97,7 +97,10 @@ namespace WhateverDevs.WebServiceConnector.Runtime.Auth
         {
             yield return loginRequest.SendWebRequest();
 
-            bool success = !(loginRequest.isNetworkError || loginRequest.isHttpError);
+            bool success =
+                loginRequest.result is not (UnityWebRequest.Result.ConnectionError
+                    or UnityWebRequest.Result.ProtocolError
+                    or UnityWebRequest.Result.DataProcessingError);
 
             if (success)
             {
@@ -156,7 +159,7 @@ namespace WhateverDevs.WebServiceConnector.Runtime.Auth
 
             PrepareHeaders(ref request);
 
-            CoroutineRunner.Instance.RunRoutine(PerformStringOrJsonRequest(request, resultCallback));
+            CoroutineRunner.RunRoutine(PerformStringOrJsonRequest(request, resultCallback));
         }
 
         /// <summary>
@@ -186,7 +189,7 @@ namespace WhateverDevs.WebServiceConnector.Runtime.Auth
 
             PrepareHeaders(ref request);
 
-            CoroutineRunner.Instance.RunRoutine(PerformStringOrJsonRequest(request, resultCallback));
+            CoroutineRunner.RunRoutine(PerformStringOrJsonRequest(request, resultCallback));
         }
 
         /// <summary>
@@ -211,7 +214,10 @@ namespace WhateverDevs.WebServiceConnector.Runtime.Auth
             yield return request.SendWebRequest();
 
             string result;
-            bool success = !(request.isNetworkError || request.isHttpError);
+
+            bool success =
+                request.result is not (UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError
+                    or UnityWebRequest.Result.DataProcessingError);
 
             if (success)
                 result = Encoding.UTF8.GetString(request.downloadHandler.data);

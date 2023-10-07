@@ -39,5 +39,19 @@ namespace WhateverDevs.WebServiceConnector.Runtime.Auth
         /// Uri to register to the service.
         /// </summary>
         public string RegisterUri;
+
+        /// <summary>
+        /// Clone this data into a new instance of the same type.
+        /// </summary>
+        /// <typeparam name="TConfigurationData">Type of the configuration.</typeparam>
+        /// <returns>The cloned config.</returns>
+        protected override TConfigurationData Clone<TConfigurationData>() =>
+            new AuthWebServiceConnectorConfig
+            {
+                Uri = Uri,
+                LoginUri = LoginUri,
+                LogoutUri = LogoutUri,
+                RegisterUri = RegisterUri
+            } as TConfigurationData;
     }
 }

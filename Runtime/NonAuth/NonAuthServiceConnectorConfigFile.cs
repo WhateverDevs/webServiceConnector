@@ -24,5 +24,13 @@ namespace WhateverDevs.WebServiceConnector.Runtime.NonAuth
         /// Uri the connector will use.
         /// </summary>
         public string Uri;
+
+        /// <summary>
+        /// Clone this data into a new instance of the same type.
+        /// </summary>
+        /// <typeparam name="TConfigurationData">Type of the configuration.</typeparam>
+        /// <returns>The cloned config.</returns>
+        protected override TConfigurationData Clone<TConfigurationData>() =>
+            new NonAuthServiceConnectorConfig { Uri = Uri } as TConfigurationData;
     }
 }
